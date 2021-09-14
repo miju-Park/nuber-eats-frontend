@@ -1,16 +1,22 @@
 import React from "react";
+import { useForm } from "react-hook-form";
 import { isLoggedInVar } from "../apollo";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Login from "../pages/login";
+import CreateAccount from "../pages/create-account";
 
 const LoggedOutRouter = () => {
-  const onClick = () => {
-    isLoggedInVar(true);
-  };
   return (
-    <div>
-      <h1>Logged Out</h1>
-      <button onClick={onClick}>Click to login</button>
-    </div>
+    <Router>
+      <Switch>
+        <Route path="/create-account">
+          <CreateAccount />
+        </Route>
+        <Route path="/">
+          <Login />
+        </Route>
+      </Switch>
+    </Router>
   );
 };
-
 export default LoggedOutRouter;
