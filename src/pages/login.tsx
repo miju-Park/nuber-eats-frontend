@@ -1,10 +1,26 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import { FormError } from "../components/form-error";
+import { gql, useMutation } from "@apollo/client";
+import {
+  loginMutation,
+  loginMutationVariables,
+} from "./mytypes.d.ts/LoginMutation";
 
 interface ILoginForm {
   email: string;
   password: string;
 }
+
+const LOGIN_MUTATION = gql`
+  mutation loginMutation($email: String!, $password: String!) {
+    login(input: { email: $email, password: $password }) {
+      ok
+      error
+      token
+    }
+  }
+`;
 
 const Login = () => {
   const {
@@ -13,8 +29,18 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<ILoginForm>();
+  const [loginMutation, { loading, error, data }] = useMutation<
+    loginMutation,
+    loginMutationVariables
+  >(LOGIN_MUTATION);
   const onSubmit = () => {
-    console.log(getValues());
+    const { email, password } = getValues();
+    loginMutation({
+      variables: {
+        email,
+        password,
+      },
+    });
   };
   return (
     <div className="h-screen flex items-center justify-center bg-gray-800">
@@ -33,9 +59,7 @@ const Login = () => {
             className=" input mb-3"
           />
           {errors.email?.message && (
-            <span className="font-medium text-red-500">
-              {errors.email?.message}
-            </span>
+            <FormError errorMessage={errors.email?.message} />
           )}
           <input
             {...register("password", {
@@ -48,14 +72,10 @@ const Login = () => {
             className="input"
           />
           {errors.password?.message && (
-            <span className="font-medium text-red-500">
-              {errors.password?.message}
-            </span>
+            <FormError errorMessage={errors.password?.message} />
           )}
           {errors?.password?.type === "minLength" && (
-            <span className="font-medium text-red-500">
-              Password should match minLength
-            </span>
+            <FormError errorMessage="Pssword should match minLength" />
           )}
 
           <button className="btn mt-3">Log In</button>
