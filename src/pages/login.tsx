@@ -5,7 +5,7 @@ import { gql, useMutation } from "@apollo/client";
 import {
   loginMutation,
   loginMutationVariables,
-} from "./mytypes.d.ts/LoginMutation";
+} from "../__generated__/LoginMutation";
 
 interface ILoginForm {
   email: string;
@@ -29,10 +29,16 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<ILoginForm>();
-  const [loginMutation, { loading, error, data }] = useMutation<
-    loginMutation,
-    loginMutationVariables
-  >(LOGIN_MUTATION);
+  const onCompleted = (data: loginMutation) => {
+    const {
+      login: { error, ok, token },
+    } = data;
+    if (ok) {
+      console.log(token);
+    }
+  };
+  const [loginMutation, { loading, error, data: loginMutationResult }] =
+    useMutation<loginMutation, loginMutationVariables>(LOGIN_MUTATION);
   const onSubmit = () => {
     const { email, password } = getValues();
     loginMutation({
@@ -79,6 +85,9 @@ const Login = () => {
           )}
 
           <button className="btn mt-3">Log In</button>
+          {loginMutationResult?.login.error && (
+            <FormError errorMessage={loginMutationResult.login.error} />
+          )}
         </form>
       </div>
     </div>
