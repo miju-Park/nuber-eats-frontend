@@ -3,14 +3,15 @@ import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
 import { gql, useMutation } from "@apollo/client";
 import nuberLogo from "../images/logo.svg";
-import Helmet from "react-helmet";
+import Helmet from "react-helmet-async";
 import {
   loginMutation,
   loginMutationVariables,
 } from "../__generated__/LoginMutation";
 import Button from "../components/button";
 import { Link } from "react-router-dom";
-import { isLoggedInVar } from "../apollo";
+import { authToken, isLoggedInVar } from "../apollo";
+import { LOCALSTORAGE_TOKEN } from "../constant";
 
 interface ILoginForm {
   email: string;
@@ -40,8 +41,10 @@ const Login = () => {
     const {
       login: { error, ok, token },
     } = data;
-    if (ok) {
+    if (ok && token) {
       isLoggedInVar(true);
+      localStorage.setItem(LOCALSTORAGE_TOKEN, token);
+      authToken(token);
     }
   };
   const [loginMutation, { loading, error, data: loginMutationResult }] =

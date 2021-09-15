@@ -4,7 +4,7 @@ import { FormError } from "../components/form-error";
 import { gql, useMutation } from "@apollo/client";
 import nuberLogo from "../images/logo.svg";
 import { useHistory } from "react-router-dom";
-import Helmet from "react-helmet";
+import Helmet from "react-helmet-async";
 import {
   createAccountMutation,
   createAccountMutationVariables,
@@ -47,6 +47,7 @@ const CreateAccount = () => {
       createAccount: { ok, error },
     } = data;
     if (ok) {
+      alert("Account Created! Log in now!");
       history.push("/login");
     }
   };
