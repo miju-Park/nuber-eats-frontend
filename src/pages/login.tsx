@@ -3,12 +3,14 @@ import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
 import { gql, useMutation } from "@apollo/client";
 import nuberLogo from "../images/logo.svg";
+import Helmet from "react-helmet";
 import {
   loginMutation,
   loginMutationVariables,
 } from "../__generated__/LoginMutation";
 import Button from "../components/button";
 import { Link } from "react-router-dom";
+import { isLoggedInVar } from "../apollo";
 
 interface ILoginForm {
   email: string;
@@ -39,7 +41,7 @@ const Login = () => {
       login: { error, ok, token },
     } = data;
     if (ok) {
-      console.log(token);
+      isLoggedInVar(true);
     }
   };
   const [loginMutation, { loading, error, data: loginMutationResult }] =
@@ -57,9 +59,11 @@ const Login = () => {
       });
     }
   };
-  console.log(isValid);
   return (
     <div className="h-screen flex items-center flex-col mt-10 lg:mt-28 ">
+      <Helmet>
+        <title>Login | Nuber Eats</title>
+      </Helmet>
       <div className="w-full max-w-screen-sm flex flex-col px-5 items-center">
         <img src={nuberLogo} className="w-60 mb-10" />
         <h4 className="w-full font-medium text-left text-3xl mb-5">
@@ -72,6 +76,8 @@ const Login = () => {
           <input
             {...register("email", {
               required: "Email is required",
+              pattern:
+                /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
             })}
             name="email"
             placeholder="Email"
@@ -79,6 +85,9 @@ const Login = () => {
           />
           {errors.email?.message && (
             <FormError errorMessage={errors.email?.message} />
+          )}
+          {errors.email?.type === "pateern" && (
+            <FormError errorMessage="Please enter a valid email" />
           )}
           <input
             {...register("password", {
