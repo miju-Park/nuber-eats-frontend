@@ -10,6 +10,7 @@ import {
 } from "react-router-dom";
 import Restaurants from "../pages/client/restaurants";
 import Header from "../components/header";
+import { useMe } from "../hooks/useMe";
 
 const ClientRoutes = [
   <Route path="/" exact>
@@ -17,18 +18,8 @@ const ClientRoutes = [
   </Route>,
 ];
 
-const ME_QUERY = gql`
-  query meQuery {
-    me {
-      id
-      email
-      role
-      verified
-    }
-  }
-`;
 const LoggedInRouter = () => {
-  const { data, loading, error } = useQuery<meQuery>(ME_QUERY);
+  const { loading, error, data } = useMe();
   if (loading || error || !data) {
     return (
       <div className="h-screen flex justify-center items-center">
