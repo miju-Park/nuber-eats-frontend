@@ -2,10 +2,13 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
 import { gql, useMutation } from "@apollo/client";
+import nuberLogo from "../images/logo.svg";
 import {
   loginMutation,
   loginMutationVariables,
 } from "../__generated__/LoginMutation";
+import Button from "../components/button";
+import { Link } from "react-router-dom";
 
 interface ILoginForm {
   email: string;
@@ -27,8 +30,10 @@ const Login = () => {
     register,
     getValues,
     handleSubmit,
-    formState: { errors },
-  } = useForm<ILoginForm>();
+    formState: { errors, isValid },
+  } = useForm<ILoginForm>({
+    mode: "onChange",
+  });
   const onCompleted = (data: loginMutation) => {
     const {
       login: { error, ok, token },
@@ -38,23 +43,31 @@ const Login = () => {
     }
   };
   const [loginMutation, { loading, error, data: loginMutationResult }] =
-    useMutation<loginMutation, loginMutationVariables>(LOGIN_MUTATION);
-  const onSubmit = () => {
-    const { email, password } = getValues();
-    loginMutation({
-      variables: {
-        email,
-        password,
-      },
+    useMutation<loginMutation, loginMutationVariables>(LOGIN_MUTATION, {
+      onCompleted,
     });
+  const onSubmit = () => {
+    if (!loading) {
+      const { email, password } = getValues();
+      loginMutation({
+        variables: {
+          email,
+          password,
+        },
+      });
+    }
   };
+  console.log(isValid);
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-800">
-      <div className="bg-white w-full max-w-lg pt-10 pb-7 rounded-lg text-center">
-        <h3 className="text-3xl text-gray-800">LogIn</h3>
+    <div className="h-screen flex items-center flex-col mt-10 lg:mt-28 ">
+      <div className="w-full max-w-screen-sm flex flex-col px-5 items-center">
+        <img src={nuberLogo} className="w-60 mb-10" />
+        <h4 className="w-full font-medium text-left text-3xl mb-5">
+          Welcome back
+        </h4>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="grid gap-3 mt-5 px-5"
+          className="grid gap-3 mt-5 w-full mb-5"
         >
           <input
             {...register("email", {
@@ -70,7 +83,6 @@ const Login = () => {
           <input
             {...register("password", {
               required: "Password is required",
-              minLength: 10,
             })}
             name="password"
             type="password"
@@ -80,15 +92,20 @@ const Login = () => {
           {errors.password?.message && (
             <FormError errorMessage={errors.password?.message} />
           )}
-          {errors?.password?.type === "minLength" && (
+          {/* {errors?.password?.type === "minLength" && (
             <FormError errorMessage="Pssword should match minLength" />
-          )}
-
-          <button className="btn mt-3">Log In</button>
+          )} */}
+          <Button canClick={isValid} loading={loading} actionText="Log In" />
           {loginMutationResult?.login.error && (
             <FormError errorMessage={loginMutationResult.login.error} />
           )}
         </form>
+        <div>
+          New to Nuber?{" "}
+          <Link className="text-lime-600 hover:underline" to="/create-account">
+            Create an Account
+          </Link>
+        </div>
       </div>
     </div>
   );
