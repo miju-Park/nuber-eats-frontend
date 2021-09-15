@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
 import { gql, useMutation } from "@apollo/client";
 import nuberLogo from "../images/logo.svg";
-import Helmet from "react-helmet-async";
+import { Helmet } from "react-helmet-async";
 import {
   loginMutation,
   loginMutationVariables,

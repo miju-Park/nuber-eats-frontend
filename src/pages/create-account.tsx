@@ -4,7 +4,7 @@ import { FormError } from "../components/form-error";
 import { gql, useMutation } from "@apollo/client";
 import nuberLogo from "../images/logo.svg";
 import { useHistory } from "react-router-dom";
-import Helmet from "react-helmet-async";
+import { Helmet } from "react-helmet-async";
 import {
   createAccountMutation,
   createAccountMutationVariables,
