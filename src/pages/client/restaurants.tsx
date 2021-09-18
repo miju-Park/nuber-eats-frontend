@@ -4,7 +4,8 @@ import {
   restaurantsQuery,
   restaurantsQueryVariables,
 } from "../../__generated__/restaurantsQuery";
-import React from "react";
+import React, { useState } from "react";
+import { Restaurant } from "../../components/restaurant";
 
 const RESTAURANTS_QUERY = gql`
   query restaurantsQuery($input: RestaurantsInput!) {
@@ -38,16 +39,19 @@ const RESTAURANTS_QUERY = gql`
   }
 `;
 export const Restaurants = () => {
+  const [page, setPage] = useState(1);
   const { data, loading } = useQuery<
     restaurantsQuery,
     restaurantsQueryVariables
   >(RESTAURANTS_QUERY, {
     variables: {
       input: {
-        page: 1,
+        page,
       },
     },
   });
+  const onPrevPageClick = () => setPage((current) => current - 1);
+  const onNextPageClick = () => setPage((current) => current + 1);
   return (
     <div>
       <form className="bg-gray-800 w-full py-40 flex items-center justify-center">
@@ -72,19 +76,43 @@ export const Restaurants = () => {
               </div>
             ))}
           </div>
-          <div className="grid mt-10 grid-cols-3 gap-x-5 gap-y-7">
+          <div className="grid mt-16 grid-cols-3 gap-x-5 gap-y-7">
             {data?.restaurants.results?.map((restaurant) => (
-              <div key={restaurant.id}>
-                <div
-                  style={{ backgroundImage: `url(${restaurant.coverImg})` }}
-                  className="bg-red-500 bg-cover bg-center mb-3 gap-11 py-28"
-                ></div>
-                <h3 className="text-xl font-medium">{restaurant.name}</h3>
-                <span className="border-t-2 border-gray-200">
-                  {restaurant.category?.name}
-                </span>
-              </div>
+              <Restaurant
+                id={`${restaurant.id}`}
+                key={restaurant.id}
+                coverImg={restaurant.coverImg}
+                name={restaurant.name}
+                categoryName={restaurant?.category?.name}
+              />
             ))}
+          </div>
+          <div className="grid grid-cols-3 text-center max-w-md items-center mx-auto mt-10">
+            {page > 1 ? (
+              <button
+                onClick={onPrevPageClick}
+                className="focus:outline-none font-medium text-2xl"
+              >
+                &larr;
+              </button>
+            ) : (
+              <div />
+            )}
+            <span className="mx-5">
+              Page {page} of {data?.restaurants?.totalPages}
+            </span>
+            {page !== data?.restaurants.totalPages ? (
+              <>
+                <button
+                  onClick={onNextPageClick}
+                  className="focus:outline-none font-medium text-2xl"
+                >
+                  &rarr;
+                </button>
+              </>
+            ) : (
+              <div />
+            )}
           </div>
         </div>
       )}
