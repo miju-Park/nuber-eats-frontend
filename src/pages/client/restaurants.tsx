@@ -59,15 +59,29 @@ export const Restaurants = () => {
       </form>
       {!loading && (
         <div className="max-w-screen-2xl mx-auto mt-8">
-          <div className="flex justify-around max-w-sm mx-auto">
+          <div className="flex justify-around max-w-lg mx-auto">
             {data?.allCategories?.categories?.map((category) => (
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col group cursor-pointer items-center">
                 <div
-                  className="w-14 h-14 bg-cover hover:bg-gray-100 cursor-pointer rounded-full"
+                  className="w-16 h-16 bg-cover group-hover:bg-gray-100 rounded-full"
                   style={{ backgroundImage: `url(${category.coverImg})` }}
-                ></div>
+                />
                 <span className="mt-1 text-sm text-center font-bold">
                   {category.name}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="grid mt-10 grid-cols-3 gap-x-5 gap-y-7">
+            {data?.restaurants.results?.map((restaurant) => (
+              <div key={restaurant.id}>
+                <div
+                  style={{ backgroundImage: `url(${restaurant.coverImg})` }}
+                  className="bg-red-500 bg-cover bg-center mb-3 gap-11 py-28"
+                ></div>
+                <h3 className="text-xl font-medium">{restaurant.name}</h3>
+                <span className="border-t-2 border-gray-200">
+                  {restaurant.category?.name}
                 </span>
               </div>
             ))}
