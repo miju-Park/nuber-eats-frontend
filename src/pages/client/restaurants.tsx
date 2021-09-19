@@ -9,7 +9,8 @@ import { Restaurant } from "../../components/restaurant";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
 import { Helmet } from "react-helmet-async";
-import { RESTAURANT_FRAGMENT } from "../../fragment";
+import { CATEGORY_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragment";
+import { Link } from "react-router-dom";
 
 const RESTAURANTS_QUERY = gql`
   query restaurantsQuery($input: RestaurantsInput!) {
@@ -17,11 +18,7 @@ const RESTAURANTS_QUERY = gql`
       ok
       error
       categories {
-        id
-        name
-        coverImg
-        slug
-        restaurantCount
+        ...CategoryParts
       }
     }
     restaurants(input: $input) {
@@ -35,6 +32,7 @@ const RESTAURANTS_QUERY = gql`
     }
   }
   ${RESTAURANT_FRAGMENT}
+  ${CATEGORY_FRAGMENT}
 `;
 interface IFormProps {
   searchTerm: string;
@@ -83,18 +81,17 @@ export const Restaurants = () => {
         <div className="max-w-screen-2xl mx-auto mt-8">
           <div className="flex justify-around max-w-lg mx-auto">
             {data?.allCategories?.categories?.map((category) => (
-              <div
-                className="flex flex-col group cursor-pointer items-center"
-                key={category.id}
-              >
-                <div
-                  className="w-16 h-16 bg-cover group-hover:bg-gray-100 rounded-full"
-                  style={{ backgroundImage: `url(${category.coverImg})` }}
-                />
-                <span className="mt-1 text-sm text-center font-bold">
-                  {category.name}
-                </span>
-              </div>
+              <Link to={`/category/${category.slug}`} key={category.id}>
+                <div className="flex flex-col group cursor-pointer items-center">
+                  <div
+                    className="w-16 h-16 bg-cover group-hover:bg-gray-100 rounded-full"
+                    style={{ backgroundImage: `url(${category.coverImg})` }}
+                  />
+                  <span className="mt-1 text-sm text-center font-bold">
+                    {category.name}
+                  </span>
+                </div>
+              </Link>
             ))}
           </div>
           <div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-7">
