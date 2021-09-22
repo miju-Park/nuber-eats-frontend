@@ -39,7 +39,7 @@ const ClientRoutes = [
   </Route>,
 ];
 
-const LoggedInRouter = () => {
+export const LoggedInRouter = () => {
   const { loading, error, data } = useMe();
   if (loading || error || !data) {
     return (
@@ -60,4 +60,3 @@ const LoggedInRouter = () => {
     </Router>
   );
 };
-export default LoggedInRouter;
