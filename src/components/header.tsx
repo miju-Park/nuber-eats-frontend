@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 
-const Header: React.FC = () => {
+export const Header: React.FC = () => {
   const { data } = useMe();
   return (
     <>
@@ -29,4 +29,3 @@ const Header: React.FC = () => {
     </>
   );
 };
-export default Header;
